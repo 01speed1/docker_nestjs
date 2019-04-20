@@ -1,0 +1,31 @@
+version: '3'
+services:
+  web:
+    #crea la imagen y el contenedor a partir del Dockerfile local
+    build: .
+    #este comando arraca nuestro contenedor en modo desarrollo y queda atento a los cambios
+    #de nuestros archivos
+    command: sh -c 'npm run start:dev'
+    #Hace un binding de nuestra carpeta local con la carpeta de nuestro contenedor donde
+    #tenemos la app
+    volumes:
+      - .:/my_nest_app
+    ports:
+      - "3000:3000"
+    #obliga a que primero se inicie un contenedor con mongodb
+    depends_on:
+      - mongo_db
+
+  #el contenedor que va inciar mongo db
+  mongo_db:
+    image: mongo:4
+    #expose:
+      #- "27017"
+    volumes:
+      - mongo_data:/data/db
+
+#un volumen a parte para los datos guardados en nuestro mongo db y no se mescle con
+#los datos de nuestra app
+volumes:
+  mongo_data:
+    driver: local
